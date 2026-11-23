@@ -18,3 +18,9 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('member', MemberController::class);
     Route::resource('activity', ActivityController::class);
 });
+use App\Http\Controllers\PublicController;
+
+// Rute Publik Utama (Halaman Beranda ada di '/')
+Route::get('/', [PublicController::class, 'home'])->name('home');
+Route::get('/profil', [PublicController::class, 'profile'])->name('profile');
+Route::get('/informasi', [PublicController::class, 'info'])->name('info');

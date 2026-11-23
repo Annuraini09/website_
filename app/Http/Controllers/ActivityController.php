@@ -24,9 +24,20 @@ class ActivityController extends Controller
             'judul' => 'required',
             'deskripsi' => 'required',
             'date' => 'required|date',
+            'foto' => 'nullable|image|mimes:jpeg,png,jpg|max:2048', // Validasi foto kegiatan
         ]);
 
-        Activity::create($request->all());
+        $input = $request->all();
+
+        // Logika upload foto kegiatan
+        if ($request->hasFile('foto')) {
+            $file = $request->file('foto');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $file->move(public_path('images'), $filename);
+            $input['foto'] = $filename;
+        }
+
+        Activity::create($input);
 
         return redirect()->route('activity.index')->with('success', 'Kegiatan Deutsch Club berhasil ditambahkan!');
     }
@@ -42,15 +53,36 @@ class ActivityController extends Controller
             'judul' => 'required',
             'deskripsi' => 'required',
             'date' => 'required|date',
+            'foto' => 'nullable|image|mimes:jpeg,png,jpg|max:2048', // Validasi foto kegiatan
         ]);
 
-        $activity->update($request->all());
+        $input = $request->all();
+
+        // Logika update foto kegiatan
+        if ($request->hasFile('foto')) {
+            // Hapus foto lama jika ada
+            if ($activity->foto && file_exists(public_path('images/' . $activity->foto))) {
+                unlink(public_path('images/' . $activity->foto));
+            }
+
+            $file = $request->file('foto');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $file->move(public_path('images'), $filename);
+            $input['foto'] = $filename;
+        }
+
+        $activity->update($input);
 
         return redirect()->route('activity.index')->with('success', 'Data kegiatan berhasil diperbarui!');
     }
 
     public function destroy(Activity $activity)
     {
+        // Hapus file foto fisik saat data kegiatan dihapus
+        if ($activity->foto && file_exists(public_path('images/' . $activity->foto))) {
+            unlink(public_path('images/' . $activity->foto));
+        }
+
         $activity->delete();
 
         return redirect()->route('activity.index')->with('success', 'Data kegiatan berhasil dihapus!');

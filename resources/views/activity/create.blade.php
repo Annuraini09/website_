@@ -7,7 +7,9 @@
 </head>
 <body class="container mt-5">
     <h2>Form Tambah Kegiatan Baru</h2>
-    <form action="{{ route('activity.store') }}" method="POST" class="mt-3">
+    
+    <!-- Tambahkan enctype="multipart/form-data" di sini -->
+    <form action="{{ route('activity.store') }}" method="POST" enctype="multipart/form-data" class="mt-3">
         @csrf
         <div class="mb-3">
             <label>Judul Kegiatan</label>
@@ -21,6 +23,14 @@
             <label>Tanggal</label>
             <input type="date" name="date" class="form-control" required>
         </div>
+
+        <!-- Kolom Upload Foto Kegiatan Baru -->
+        <div class="mb-3">
+            <label>Foto Dokumentasi Kegiatan</label>
+            <input type="file" name="foto" class="form-control" accept="image/*">
+            <div class="form-text">Format: JPG, JPEG, PNG (Maks. 2MB)</div>
+        </div>
+
         <button type="submit" class="btn btn-success">Simpan Data</button>
         <a href="{{ route('activity.index') }}" class="btn btn-secondary">Kembali</a>
     </form>

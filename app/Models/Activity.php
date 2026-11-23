@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Activity extends Model
 {
     protected $table = 'activity';
-    protected $fillable = ['judul', 'deskripsi', 'date'];
+    protected $fillable = ['judul', 'deskripsi', 'date', 'foto'];
 
     // Relasi: Satu activity memiliki banyak member
     public function members()

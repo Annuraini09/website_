@@ -15,10 +15,11 @@
     <a href="{{ route('activity.create') }}" class="btn btn-primary mb-3">+ Tambah Kegiatan Baru</a>
     <a href="{{ route('member.index') }}" class="btn btn-secondary mb-3">Ke Menu Member</a>
 
-    <table class="table table-bordered table-striped">
+    <table class="table table-bordered table-striped align-middle">
         <thead class="table-dark">
             <tr>
                 <th>No</th>
+                <th>Foto</th>
                 <th>Judul Kegiatan</th>
                 <th>Deskripsi</th>
                 <th>Tanggal</th>
@@ -29,7 +30,15 @@
             @foreach ($dataActivity as $index => $item)
             <tr>
                 <td>{{ $index + 1 }}</td>
-                <td>{{ $item->judul }}</td>
+                <!-- Kolom Preview Foto Kegiatan -->
+                <td class="text-center">
+                    @if($item->foto)
+                        <img src="{{ asset('images/' . $item->foto) }}" alt="Foto Kegiatan" width="80" height="50" class="rounded object-fit-cover">
+                    @else
+                        <span class="badge bg-secondary">Tidak ada</span>
+                    @endif
+                </td>
+                <td><strong>{{ $item->judul }}</strong></td>
                 <td>{{ $item->deskripsi }}</td>
                 <td>{{ $item->date }}</td>
                 <td>

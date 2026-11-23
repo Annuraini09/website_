@@ -7,9 +7,12 @@
 </head>
 <body class="container mt-5">
     <h2>Edit Data Kegiatan</h2>
-    <form action="{{ route('activity.update', $activity->id) }}" method="POST" class="mt-3">
+    
+    <!-- Tambahkan enctype="multipart/form-data" agar file foto dapat terkirim -->
+    <form action="{{ route('activity.update', $activity->id) }}" method="POST" enctype="multipart/form-data" class="mt-3">
         @csrf
         @method('PUT')
+        
         <div class="mb-3">
             <label>Judul Kegiatan</label>
             <input type="text" name="judul" value="{{ $activity->judul }}" class="form-control" required>
@@ -22,6 +25,19 @@
             <label>Tanggal</label>
             <input type="date" name="date" value="{{ $activity->date }}" class="form-control" required>
         </div>
+
+        <!-- Input Foto & Preview Foto Lama Kegiatan -->
+        <div class="mb-3">
+            <label>Foto Dokumentasi Kegiatan</label>
+            @if($activity->foto)
+                <div class="mb-2">
+                    <img src="{{ asset('images/' . $activity->foto) }}" alt="Foto Kegiatan" width="120" class="rounded border">
+                </div>
+            @endif
+            <input type="file" name="foto" class="form-control" accept="image/*">
+            <div class="form-text">Biarkan kosong jika tidak ingin mengubah foto.</div>
+        </div>
+
         <button type="submit" class="btn btn-primary">Update Data</button>
         <a href="{{ route('activity.index') }}" class="btn btn-secondary">Kembali</a>
     </form>

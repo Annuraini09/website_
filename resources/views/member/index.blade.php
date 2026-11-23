@@ -15,15 +15,16 @@
     <a href="{{ route('member.create') }}" class="btn btn-primary mb-3">+ Daftar Anggota Baru</a>
     <a href="{{ route('activity.index') }}" class="btn btn-secondary mb-3">Kelola Kegiatan</a>
 
-    <table class="table table-bordered table-striped">
+    <table class="table table-bordered table-striped align-middle">
         <thead class="table-dark">
             <tr>
                 <th>No</th>
-                <th>Nama</th>
-                <th>Kelas</th>
-                <th>Jurusan</th>
+                <th>Foto</th>
+                <th>Nama & Jabatan</th>
+                <th>Angkatan</th>
+                <th>Kelas & Jurusan</th>
                 <th>No. HP</th>
-                <th>Kegiatan yang Diikuti</th> <!-- Kolom Relasi Eloquent -->
+                <th>Kegiatan</th>
                 <th>Aksi</th>
             </tr>
         </thead>
@@ -31,16 +32,26 @@
             @foreach ($dataMember as $index => $item)
             <tr>
                 <td>{{ $index + 1 }}</td>
-                <td>{{ $item->name }}</td>
-                <td>{{ $item->kelas }}</td>
-                <td>{{ $item->jurusan }}</td>
+                <!-- Kolom Preview Foto -->
+                <td class="text-center">
+                    @if($item->foto)
+                        <img src="{{ asset('images/' . $item->foto) }}" alt="Foto" width="50" height="50" class="rounded-circle object-fit-cover">
+                    @else
+                        <span class="badge bg-secondary">Tidak ada</span>
+                    @endif
+                </td>
+                <td>
+                    <strong>{{ $item->name }}</strong><br>
+                    <span class="badge bg-danger">{{ $item->jabatan }}</span>
+                </td>
+                <td>{{ $item->angkatan }}</td>
+                <td>{{ $item->kelas }} - {{ $item->jurusan }}</td>
                 <td>{{ $item->phone }}</td>
                 <td>
-                    {{-- Menampilkan judul kegiatan melalui relasi Eloquent --}}
                     @if($item->activity)
                         <span class="badge bg-info text-dark">{{ $item->activity->judul }}</span>
                     @else
-                        <span class="text-muted">Belum mengikuti kegiatan</span>
+                        <span class="text-muted">Belum mengikuti</span>
                     @endif
                 </td>
                 <td>

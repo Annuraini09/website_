@@ -28,10 +28,23 @@ class MemberController extends Controller
             'kelas' => 'required',
             'jurusan' => 'required',
             'phone' => 'required',
+            'jabatan' => 'required',
+            'angkatan' => 'required',
+            'foto' => 'nullable|image|mimes:jpeg,png,jpg|max:2048', // Validasi file foto
             'activity_id' => 'nullable|exists:activity,id',
         ]);
 
-        Member::create($request->all());
+        $input = $request->all();
+
+        // Logika upload foto
+        if ($request->hasFile('foto')) {
+            $file = $request->file('foto');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $file->move(public_path('images'), $filename);
+            $input['foto'] = $filename;
+        }
+
+        Member::create($input);
 
         return redirect()->route('member.index')->with('success', 'Anggota berhasil ditambahkan!');
     }
@@ -49,16 +62,39 @@ class MemberController extends Controller
             'kelas' => 'required',
             'jurusan' => 'required',
             'phone' => 'required',
+            'jabatan' => 'required',
+            'angkatan' => 'required',
+            'foto' => 'nullable|image|mimes:jpeg,png,jpg|max:2048', // Validasi file foto
             'activity_id' => 'nullable|exists:activity,id',
         ]);
 
-        $member->update($request->all());
+        $input = $request->all();
+
+        // Logika update foto
+        if ($request->hasFile('foto')) {
+            // Hapus foto lama jika ada
+            if ($member->foto && file_exists(public_path('images/' . $member->foto))) {
+                unlink(public_path('images/' . $member->foto));
+            }
+
+            $file = $request->file('foto');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $file->move(public_path('images'), $filename);
+            $input['foto'] = $filename;
+        }
+
+        $member->update($input);
 
         return redirect()->route('member.index')->with('success', 'Data anggota berhasil diperbarui!');
     }
 
     public function destroy(Member $member)
     {
+        // Hapus file foto fisik saat data anggota dihapus
+        if ($member->foto && file_exists(public_path('images/' . $member->foto))) {
+            unlink(public_path('images/' . $member->foto));
+        }
+
         $member->delete();
 
         return redirect()->route('member.index')->with('success', 'Data anggota berhasil dihapus!');

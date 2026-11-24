@@ -2,9 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Member;
 use App\Models\Activity;
-use Illuminate\Http\Request;
+use App\Models\Member;
 
 class PublicController extends Controller
 {
@@ -12,6 +11,7 @@ class PublicController extends Controller
     public function home()
     {
         $activities = Activity::latest()->take(3)->get(); // Ambil 3 kegiatan terbaru
+
         return view('public.home', compact('activities'));
     }
 
@@ -24,8 +24,13 @@ class PublicController extends Controller
     // Halaman Informasi Anggota & Kegiatan
     public function info()
     {
-        $members = Member::with('activity')->get();
-        $activities = Activity::all();
-        return view('public.info', compact('members', 'activities'));
+        $membersByGeneration = Member::query()
+            ->orderBy('angkatan')
+            ->orderBy('name')
+            ->get()
+            ->groupBy(fn (Member $member) => $member->angkatan ?: 'Angkatan belum ditentukan');
+        $activities = Activity::query()->latest('date')->get();
+
+        return view('public.info', compact('membersByGeneration', 'activities'));
     }
 }

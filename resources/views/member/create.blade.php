@@ -2,63 +2,77 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>Tambah Anggota</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Tambah Anggota - Deutsch Club</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="container mt-5">
-    <h2>Form Pendaftaran Anggota Baru</h2>
-    
-    <!-- Tambahkan enctype="multipart/form-data" di sini -->
-    <form action="{{ route('member.store') }}" method="POST" enctype="multipart/form-data" class="mt-3">
-        @csrf
-        <div class="mb-3">
-            <label>Nama</label>
-            <input type="text" name="name" class="form-control" required>
+<body class="admin-body">
+    @include('admin.partials.nav', ['active' => 'member'])
+    <main class="admin-shell">
+        <div class="admin-page-heading">
+            <div><h1>Tambah anggota</h1><p>Lengkapi profil anggota untuk ditampilkan di halaman publik.</p></div>
         </div>
-
-        <!-- Kolom Jabatan Baru -->
-        <div class="mb-3">
-            <label>Jabatan (Contoh: Ketua, Sekretaris, Anggota)</label>
-            <input type="text" name="jabatan" class="form-control" required>
-        </div>
-
-        <!-- Kolom Angkatan Baru -->
-        <div class="mb-3">
-            <label>Angkatan (Contoh: Angkatan 6, 2024/2025)</label>
-            <input type="text" name="angkatan" class="form-control" required>
-        </div>
-
-        <div class="mb-3">
-            <label>Kelas</label>
-            <input type="text" name="kelas" class="form-control" required>
-        </div>
-        <div class="mb-3">
-            <label>Jurusan</label>
-            <input type="text" name="jurusan" class="form-control" required>
-        </div>
-        <div class="mb-3">
-            <label>No. HP</label>
-            <input type="text" name="phone" class="form-control" required>
-        </div>
-
-        <!-- Kolom Upload Foto Baru -->
-        <div class="mb-3">
-            <label>Foto Anggota</label>
-            <input type="file" name="foto" class="form-control" accept="image/*">
-            <div class="form-text">Format: JPG, JPEG, PNG (Maks. 2MB)</div>
-        </div>
-
-        <div class="mb-3">
-            <label>Pilih Kegiatan (Opsional)</label>
-            <select name="activity_id" class="form-control">
-                <option value="">-- Pilih Kegiatan --</option>
-                @foreach($dataActivity as $act)
-                    <option value="{{ $act->id }}">{{ $act->judul }}</option>
-                @endforeach
-            </select>
-        </div>
-        <button type="submit" class="btn btn-success">Simpan Data</button>
-        <a href="{{ route('member.index') }}" class="btn btn-secondary">Kembali</a>
-    </form>
+        <section class="admin-panel admin-form">
+            @if($errors->any())
+                <div class="alert alert-danger">Periksa kembali data yang dimasukkan.</div>
+            @endif
+            <form action="{{ route('member.store') }}" method="POST" enctype="multipart/form-data">
+                @csrf
+                <div class="mb-3">
+                    <label class="form-label" for="name">Nama lengkap</label>
+                    <input id="name" type="text" name="name" value="{{ old('name') }}" class="form-control @error('name') is-invalid @enderror" required>
+                    @error('name')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label" for="jabatan">Jabatan</label>
+                        <input id="jabatan" type="text" name="jabatan" value="{{ old('jabatan', 'Anggota') }}" class="form-control @error('jabatan') is-invalid @enderror" required>
+                        @error('jabatan')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label" for="angkatan">Angkatan</label>
+                        <input id="angkatan" type="text" name="angkatan" value="{{ old('angkatan') }}" placeholder="Contoh: Angkatan 8 (2023/2024)" class="form-control @error('angkatan') is-invalid @enderror" required>
+                        @error('angkatan')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label" for="kelas">Kelas</label>
+                        <input id="kelas" type="text" name="kelas" value="{{ old('kelas') }}" class="form-control @error('kelas') is-invalid @enderror" required>
+                        @error('kelas')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label" for="jurusan">Jurusan</label>
+                        <input id="jurusan" type="text" name="jurusan" value="{{ old('jurusan') }}" class="form-control @error('jurusan') is-invalid @enderror" required>
+                        @error('jurusan')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label" for="phone">Nomor HP</label>
+                        <input id="phone" type="tel" name="phone" value="{{ old('phone') }}" class="form-control @error('phone') is-invalid @enderror" required>
+                        @error('phone')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label" for="foto">Foto anggota</label>
+                        <input id="foto" type="file" name="foto" class="form-control @error('foto') is-invalid @enderror" accept=".jpg,.jpeg,.png">
+                        <div class="form-text">JPG atau PNG, maksimal 2 MB.</div>
+                        @error('foto')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                    </div>
+                    <div class="col-12 mb-3">
+                        <label class="form-label" for="activity_id">Kegiatan (opsional)</label>
+                        <select id="activity_id" name="activity_id" class="form-select @error('activity_id') is-invalid @enderror">
+                            <option value="">Belum memilih kegiatan</option>
+                            @foreach($dataActivity as $activity)
+                                <option value="{{ $activity->id }}" @selected(old('activity_id') == $activity->id)>{{ $activity->judul }}</option>
+                            @endforeach
+                        </select>
+                        @error('activity_id')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                    </div>
+                </div>
+                <div class="admin-form-actions">
+                    <button type="submit" class="btn btn-primary">Simpan anggota</button>
+                    <a href="{{ route('member.index') }}" class="btn btn-outline-secondary">Batal</a>
+                </div>
+            </form>
+        </section>
+    </main>
 </body>
 </html>

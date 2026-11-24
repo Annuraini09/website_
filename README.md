@@ -7,6 +7,31 @@
 <a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
 </p>
 
+## Deutsch Club admin
+
+Jalankan migrasi sebelum memakai panel admin:
+
+```bash
+php artisan migrate
+```
+
+Hak admin tidak diberikan otomatis. Buat akun melalui Tinker (ganti email dan password dengan nilai milik sendiri), atau promosikan akun yang sudah ada:
+
+```bash
+php artisan tinker
+```
+
+```php
+App\Models\User::create([
+    'name' => 'Admin Deutsch Club',
+    'email' => 'admin@example.com',
+    'password' => 'gunakan-password-kuat',
+    'is_admin' => true,
+]);
+```
+
+Akun biasa tidak dapat membuka dashboard maupun halaman pengelolaan. Halaman anggota dan kegiatan publik mengikuti data yang dikelola melalui panel admin.
+
 ## About Laravel
 
 Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:

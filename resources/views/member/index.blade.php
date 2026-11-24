@@ -2,69 +2,74 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>Daftar Anggota - Deutsch Club</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Kelola Anggota - Deutsch Club</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="container mt-5">
-    <h2 class="mb-3">Daftar Anggota Deutsch Club</h2>
-    
-    @if(session('success'))
-        <div class="alert alert-success">{{ session('success') }}</div>
-    @endif
+<body class="admin-body">
+    @include('admin.partials.nav', ['active' => 'member'])
 
-    <a href="{{ route('member.create') }}" class="btn btn-primary mb-3">+ Daftar Anggota Baru</a>
-    <a href="{{ route('activity.index') }}" class="btn btn-secondary mb-3">Kelola Kegiatan</a>
+    <main class="admin-shell">
+        <div class="admin-page-heading">
+            <div>
+                <h1>Manajemen Anggota</h1>
+                <p>Data anggota dikelompokkan per angkatan di halaman informasi publik.</p>
+            </div>
+            <a href="{{ route('member.create') }}" class="btn btn-primary">+ Tambah anggota</a>
+        </div>
 
-    <table class="table table-bordered table-striped align-middle">
-        <thead class="table-dark">
-            <tr>
-                <th>No</th>
-                <th>Foto</th>
-                <th>Nama & Jabatan</th>
-                <th>Angkatan</th>
-                <th>Kelas & Jurusan</th>
-                <th>No. HP</th>
-                <th>Kegiatan</th>
-                <th>Aksi</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach ($dataMember as $index => $item)
-            <tr>
-                <td>{{ $index + 1 }}</td>
-                <!-- Kolom Preview Foto -->
-                <td class="text-center">
-                    @if($item->foto)
-                        <img src="{{ asset('images/' . $item->foto) }}" alt="Foto" width="50" height="50" class="rounded-circle object-fit-cover">
-                    @else
-                        <span class="badge bg-secondary">Tidak ada</span>
-                    @endif
-                </td>
-                <td>
-                    <strong>{{ $item->name }}</strong><br>
-                    <span class="badge bg-danger">{{ $item->jabatan }}</span>
-                </td>
-                <td>{{ $item->angkatan }}</td>
-                <td>{{ $item->kelas }} - {{ $item->jurusan }}</td>
-                <td>{{ $item->phone }}</td>
-                <td>
-                    @if($item->activity)
-                        <span class="badge bg-info text-dark">{{ $item->activity->judul }}</span>
-                    @else
-                        <span class="text-muted">Belum mengikuti</span>
-                    @endif
-                </td>
-                <td>
-                    <a href="{{ route('member.edit', $item->id) }}" class="btn btn-warning btn-sm">Edit</a>
-                    <form action="{{ route('member.destroy', $item->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Yakin ingin menghapus?')">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="btn btn-danger btn-sm">Hapus</button>
-                    </form>
-                </td>
-            </tr>
-            @endforeach
-        </tbody>
-    </table>
+        @if(session('success'))
+            <div class="alert alert-success">{{ session('success') }}</div>
+        @endif
+
+        <section class="admin-panel">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h2 class="admin-panel-title mb-0">Daftar anggota</h2>
+                <span class="badge rounded-pill text-bg-light">{{ $dataMember->count() }} orang</span>
+            </div>
+            @if($dataMember->isNotEmpty())
+                <div class="admin-table-wrap">
+                    <table class="table admin-table">
+                        <thead>
+                            <tr>
+                                <th>Anggota</th><th>Angkatan</th><th>Kelas &amp; jurusan</th><th>No. HP</th><th>Kegiatan</th><th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($dataMember as $item)
+                                <tr>
+                                    <td>
+                                        <div class="d-flex align-items-center gap-2">
+                                            @if($item->foto)
+                                                <img src="{{ asset('images/' . $item->foto) }}" alt="" width="42" height="42" class="rounded-circle object-fit-cover">
+                                            @else
+                                                <span class="d-grid rounded-circle bg-light text-danger fw-bold" style="width:42px;height:42px;place-items:center">DC</span>
+                                            @endif
+                                            <span><strong>{{ $item->name }}</strong><br><small class="text-muted">{{ $item->jabatan ?: 'Anggota' }}</small></span>
+                                        </div>
+                                    </td>
+                                    <td>{{ $item->angkatan ?: 'Belum ditentukan' }}</td>
+                                    <td>{{ $item->kelas }} · {{ $item->jurusan }}</td>
+                                    <td>{{ $item->phone }}</td>
+                                    <td>{{ $item->activity?->judul ?: '—' }}</td>
+                                    <td class="text-nowrap">
+                                        <a href="{{ route('member.edit', $item) }}" class="btn btn-sm btn-outline-primary">Edit</a>
+                                        <form action="{{ route('member.destroy', $item) }}" method="POST" class="d-inline" onsubmit="return confirm('Yakin ingin menghapus anggota ini?')">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-sm btn-outline-danger">Hapus</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            @else
+                <div class="dc-empty-state">Data anggota belum tersedia. Tambahkan anggota untuk mulai mengisi halaman publik.</div>
+            @endif
+        </section>
+    </main>
 </body>
 </html>
